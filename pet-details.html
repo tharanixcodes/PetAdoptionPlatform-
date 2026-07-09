@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companion Profile | Pawsitive Hearts</title>
+    <style>
+        /* --- CSS VARIABLES & THEMING --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #06b6d4;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+        }
+
+        /* --- BASE RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--background); color: var(--text); transition: var(--transition); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 14px 28px; font-weight: 600; border-radius: var(--radius-md);
+            transition: var(--transition); cursor: pointer; border: none; font-size: 1rem;
+        }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+        .btn-secondary { background-color: transparent; color: var(--text); border: 2px solid var(--border); }
+        .btn-secondary:hover { background-color: var(--border); }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        [data-theme="dark"] .header { background-color: rgba(15, 23, 42, 0.8); }
+        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { display: flex; gap: 32px; list-style: none; }
+        .nav-link { font-weight: 500; color: var(--text-muted); }
+        .nav-link:hover { color: var(--text); }
+        .theme-toggle { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text); padding: 8px; }
+
+        /* --- LAYOUT CONFIGURATION --- */
+        .profile-workspace { padding-top: 120px; padding-bottom: 80px; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); font-weight: 600; margin-bottom: 24px; }
+        
+        .main-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+        
+        /* --- IMAGE GALLERY SYSTEM --- */
+        .gallery-container { display: flex; flex-direction: column; gap: 16px; }
+        .main-display-image { width: 100%; height: 450px; object-fit: cover; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+        
+        /* --- BIO DETAILS LAYER --- */
+        .details-container { display: flex; flex-direction: column; }
+        .details-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .pet-title { font-size: 2.5rem; font-weight: 800; }
+        .breed-badge { background-color: rgba(79, 70, 229, 0.1); color: var(--primary); padding: 6px 14px; border-radius: 100px; font-weight: 600; font-size: 0.9rem; }
+        
+        .meta-highlights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+        .highlight-card { background-color: var(--surface); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius-md); text-align: center; }
+        .highlight-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .highlight-val { font-size: 1.1rem; font-weight: 700; }
+
+        .story-block { margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 32px; }
+        .story-block h3 { margin-bottom: 12px; font-size: 1.25rem; font-weight: 700; }
+
+        /* --- VITAL SPECS PROFILE LIST --- */
+        .specs-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+        .spec-item { display: flex; justify-content: space-between; padding: 12px 16px; background-color: var(--surface); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.95rem; }
+        .spec-lbl { color: var(--text-muted); }
+        .spec-val { font-weight: 600; color: var(--success); }
+
+        .action-tray { display: flex; gap: 16px; }
+        .action-tray .btn { flex: 1; }
+
+        /* --- RESPONSIVE GRID OVERRIDES --- */
+        @media (max-width: 968px) {
+            .main-profile-grid { grid-template-columns: 1fr; gap: 32px; }
+            .main-display-image { height: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container navbar">
+            <a href="index.html" class="logo">🐾 Pawsitive Hearts</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="browse.html" class="nav-link">Browse Pets</a></li>
+                    <li><a href="shelters.html" class="nav-link">Shelters</a></li>
+                    <li><a href="care-guide.html" class="nav-link">Care Guide</a></li>
+                    <li><a href="stories.html" class="nav-link">Stories</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle">🌓</button>
+                <a href="dashboard.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container profile-workspace">
+        <a href="browse.html" class="back-link">← Return to Companion Directory</a>
+        
+        <div class="main-profile-grid" id="profile-render-mount">
+            </div>
+    </main>
+
+    <script>
+        // System Data Stream Router Linkage Layout Mapping
+        const DATA_SET = {
+            1: { name: "Buddy", breed: "Golden Retriever", age: "2 Years", gender: "Male", size: "Large (28 kg)", medical: "Fully Cleared", status: "Urgent Adoption", location: "Hope Shelter, NY", img: "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=800", bio: "Buddy is a charismatic, boundlessly energetic companion who thrives in active environments. He excels at interactive fetching metrics, balances beautifully with home layout structures, and has logged verified absolute clearance benchmarks across our veterinary framework evaluation matrix." },
+            2: { name: "Luna", breed: "Siamese Cat", age: "1 Year", gender: "Female", size: "Small (4 kg)", medical: "Fully Cleared", status: "Sweet Soul", location: "Grace Sanctuary", img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=800", bio: "Luna features an elegant, exceptionally peaceful temperament. She values calm structural micro-environments, offers beautiful gentle feedback loops, and possesses perfect standard social parameters around other verified indoor domestic companion cats." },
+            3: { name: "Oliver", breed: "Angora Rabbit", age: "5 Months", gender: "Male", size: "Miniature (1.5 kg)", medical: "Pending Verification", status: "Playful", location: "Hope Shelter, NY", img: "https://images.unsplash.com/photo-1585110396000-c9ffd4e3b308?auto=format&fit=crop&q=80&w=800", bio: "Oliver is a remarkably soft, bright, and inquisitive young rabbit. He thoroughly enjoys investigating secure outdoor greenspaces, engages wonderfully with sensory tracking tasks, and requires standard specialized grooming cycles due to his premium soft fur texture." }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Matrix Configuration Synchronization Loop
+            const themeToggle = document.getElementById('theme-toggle');
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            themeToggle.addEventListener('click', () => {
+                const target = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', target);
+                localStorage.setItem('theme', target);
+            });
+
+            // Parse Route Query Context
+            const urlParams = new URLSearchParams(window.location.search);
+            const petId = urlParams.get('id') || 1; // Default fallback to index 1 tracking
+            const activeProfile = DATA_SET[petId] || DATA_SET[1];
+
+            const mountPoint = document.getElementById('profile-render-mount');
+            
+            // Generate structural page layout matrix parameters dynamically
+            mountPoint.innerHTML = `
+                <div class="gallery-container">
+                    <img src="${activeProfile.img}" alt="${activeProfile.name}" class="main-display-image">
+                </div>
+                <div class="details-container">
+                    <div class="details-header">
+                        <h1 class="pet-title">${activeProfile.name}</h1>
+                        <span class="breed-badge">${activeProfile.breed}</span>
+                    </div>
+                    
+                    <div class="meta-highlights-grid">
+                        <div class="highlight-card"><div class="highlight-label">Age</div><div class="highlight-val">${activeProfile.age}</div></div>
+                        <div class="highlight-card"><div class="highlight-label">Gender</div><div class="highlight-val">${activeProfile.gender}</div></div>
+                        <div class="highlight-card"><div class="highlight-label">Status</div><div class="highlight-val" style="color:var(--primary);">${activeProfile.status}</div></div>
+                    </div>
+
+                    <div class="story-block">
+                        <h3>Background & Personality</h3>
+                        <p style="color: var(--text-muted);">${activeProfile.bio}</p>
+                    </div>
+
+                    <div class="specs-list">
+                        <div class="spec-item"><span class="spec-lbl">Size Class</span><span class="spec-val" style="color:var(--text);">${activeProfile.size}</span></div>
+                        <div class="spec-item"><span class="spec-lbl">Medical Clearance</span><span class="spec-val">✓ Verified</span></div>
+                        <div class="spec-item"><span class="spec-lbl">Primary Location</span><span class="spec-val" style="color:var(--text);">${activeProfile.location}</span></div>
+                        <div class="spec-item"><span class="spec-lbl">Microchipped</span><span class="spec-val">✓ Yes</span></div>
+                    </div>
+
+                    <div class="action-tray">
+                        <a href="adopt.html?id=${petId}" class="btn btn-primary">Initiate Adoption Application</a>
+                        <a href="visit.html?shelter=${encodeURIComponent(activeProfile.location)}" class="btn btn-secondary">Schedule Visit</a>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

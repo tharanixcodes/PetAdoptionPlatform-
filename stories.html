@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Stories | Pawsitive Hearts</title>
+    <style>
+        /* --- CSS VARIABLES & THEMING --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #06b6d4;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+        }
+
+        /* --- BASE RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--background); color: var(--text); transition: var(--transition); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 10px 20px; font-weight: 600; border-radius: var(--radius-sm);
+            transition: var(--transition); cursor: pointer; border: none; font-size: 0.9rem;
+        }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        [data-theme="dark"] .header { background-color: rgba(15, 23, 42, 0.8); }
+        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { display: flex; gap: 32px; list-style: none; }
+        .nav-link { font-weight: 500; color: var(--text-muted); }
+        .nav-link:hover, .nav-link.active { color: var(--text); }
+        .theme-toggle { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text); padding: 8px; }
+
+        /* --- WORKSPACE LAYOUT --- */
+        .stories-workspace { padding-top: 120px; padding-bottom: 80px; }
+        .workspace-header { text-align: center; max-width: 600px; margin: 0 auto 60px auto; }
+
+        /* --- STORIES MASONRY/GRID --- */
+        .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 32px; }
+        
+        .story-card {
+            background-color: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow);
+            display: flex; flex-direction: column; transition: var(--transition);
+        }
+        .story-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+        .story-images { display: grid; grid-template-columns: 1fr 1fr; height: 200px; background-color: #000; }
+        .story-img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--surface); }
+
+        .story-body { padding: 28px; flex-grow: 1; display: flex; flex-direction: column; }
+        .story-tag { font-size: 0.85rem; color: var(--secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+        .story-title { font-size: 1.35rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .story-excerpt { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; flex-grow: 1; }
+
+        .story-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 16px; margin-top: auto; }
+        .author-meta { font-size: 0.85rem; color: var(--text-muted); }
+        
+        .upvote-btn {
+            display: inline-flex; align-items: center; gap: 6px; background-color: var(--background);
+            border: 1px solid var(--border); padding: 6px 14px; border-radius: 100px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: var(--transition);
+            color: var(--text);
+        }
+        .upvote-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .upvote-btn.voted { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container navbar">
+            <a href="index.html" class="logo">🐾 Pawsitive Hearts</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="browse.html" class="nav-link">Browse Pets</a></li>
+                    <li><a href="shelters.html" class="nav-link">Shelters</a></li>
+                    <li><a href="care-guide.html" class="nav-link">Care Guide</a></li>
+                    <li><a href="stories.html" class="nav-link active">Stories</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container stories-workspace">
+        <div class="workspace-header">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;">Adoption Chronicles</h1>
+            <p style="color: var(--text-muted);">Real verification case studies showcasing successful companion deployments and habitat transformations within our community loop.</p>
+        </div>
+
+        <div class="stories-grid">
+            
+            <div class="story-card" data-story-id="story_01">
+                <div class="story-images">
+                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300" alt="Before" class="story-img" title="Shelter Baseline Context">
+                    <img src="https://www.bing.com/th/id/OIP.Jf0NnGpH2AhNM3BtwZufwwHaJ4?w=193&h=257&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=ImgAns&rm=2" alt="After" class="story-img" title="Post-Deployment Integration">
+                </div>
+                <div class="story-body">
+                    <div class="story-tag"></div>
+                    <br>
+                    <h2 class="story-title">From High-Stress Shelter Pod to 5-Acre Suburb Haven</h2>
+                    <p class="story-excerpt">Max exhibited advanced cortisol reactivity metrics when initially cataloged in early phases. Following formal structural routing through our match engine, his behavioral stats balanced within weeks.</p>
+                    <div class="story-footer">
+                        <span class="author-meta">By <strong>The Miller Family</strong></span>
+                        <button class="upvote-btn" data-count="142">❤️ <span class="counter-val">142</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="story-card" data-story-id="story_02">
+                <div class="story-images">
+                    <img src="https://www.bing.com/th/id/OIP.CGhzovPGwt5YdEau7kekSgHaE8?w=193&h=135&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=ImgAns&rm=2" alt="Before" class="story-img">
+                    <img src="https://www.bing.com/th/id/OIP.OjUr_h9cUWLNyN4dKfzylAHaLH?w=193&h=290&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=ImgAns&rm=2" alt="After" class="story-img">
+                </div>
+                <div class="story-body">
+                    <div class="story-tag"></div>
+                    <br>
+                    <br>
+                    <h2 class="story-title">Overcoming Complex Urban Feline Anxiety Matrix Loops</h2>
+                    <p class="story-excerpt">Cleo strictly restricted her physical positioning parameters to structural under-bed spaces initially. Using specialized slow micro-exposure tracks, she now masters living room navigation layout maps.</p>
+                    <div class="story-footer">
+                        <span class="author-meta">By <strong>Sarah Jenkins</strong></span>
+                        <button class="upvote-btn" data-count="98">❤️ <span class="counter-val">98</span></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Sync Module
+            const themeToggle = document.getElementById('theme-toggle');
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            themeToggle.addEventListener('click', () => {
+                const target = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', target);
+                localStorage.setItem('theme', target);
+            });
+
+            // Upvote Interactivity & Persistent State Engine Matrix
+            const upvoteButtons = document.querySelectorAll('.upvote-btn');
+
+            upvoteButtons.forEach(btn => {
+                const card = btn.closest('.story-card');
+                const storyId = card.getAttribute('data-story-id');
+                const counterSpan = btn.querySelector('.counter-val');
+                let baseCount = parseInt(btn.getAttribute('data-count'), 10);
+
+                // Fetch local state records
+                const userVoted = localStorage.getItem(`voted_${storyId}`) === 'true';
+                if (userVoted) {
+                    btn.classList.add('voted');
+                    counterSpan.innerText = baseCount + 1;
+                }
+
+                btn.addEventListener('click', () => {
+                    const dynamicState = btn.classList.contains('voted');
+                    if (dynamicState) {
+                        btn.classList.remove('voted');
+                        counterSpan.innerText = baseCount;
+                        localStorage.setItem(`voted_${storyId}`, 'false');
+                    } else {
+                        btn.classList.add('voted');
+                        counterSpan.innerText = baseCount + 1;
+                        localStorage.setItem(`voted_${storyId}`, 'true');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

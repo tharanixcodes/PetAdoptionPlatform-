@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verified Network Shelters | Pawsitive Hearts</title>
+    <style>
+        /* --- CSS VARIABLES & THEMING --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #06b6d4;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+        }
+
+        /* --- BASE RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--background); color: var(--text); transition: var(--transition); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 10px 20px; font-weight: 600; border-radius: var(--radius-sm);
+            transition: var(--transition); cursor: pointer; border: none; font-size: 0.9rem;
+        }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        [data-theme="dark"] .header { background-color: rgba(15, 23, 42, 0.8); }
+        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { display: flex; gap: 32px; list-style: none; }
+        .nav-link { font-weight: 500; color: var(--text-muted); }
+        .nav-link:hover, .nav-link.active { color: var(--text); }
+        .theme-toggle { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text); padding: 8px; }
+
+        /* --- WORKSPACE LAYOUT --- */
+        .shelter-workspace { padding-top: 120px; padding-bottom: 80px; }
+        .workspace-header { text-align: center; max-width: 600px; margin: 0 auto 60px auto; }
+        
+        /* --- SHELTER GRID --- */
+        .shelter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+        .shelter-card {
+            background-color: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow);
+            display: grid; grid-template-columns: 220px 1fr; transition: var(--transition);
+        }
+        .shelter-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+        .shelter-img-wrapper { position: relative; height: 100%; min-height: 240px; }
+        .shelter-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .shelter-info { padding: 28px; display: flex; flex-direction: column; justify-content: space-between; }
+        .shelter-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+        .shelter-meta-row { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; }
+        
+        .metrics-pill-box { display: flex; gap: 12px; margin-bottom: 20px; }
+        .metric-pill { background-color: var(--background); border: 1px solid var(--border); padding: 6px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; }
+
+        .shelter-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 16px; }
+
+        /* --- RESPONSIVE INTERFACES --- */
+        @media (max-width: 968px) {
+            .shelter-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 576px) {
+            .shelter-card { grid-template-columns: 1fr; }
+            .shelter-img-wrapper { height: 200px; min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container navbar">
+            <a href="index.html" class="logo">🐾 Pawsitive Hearts</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="browse.html" class="nav-link">Browse Pets</a></li>
+                    <li><a href="shelters.html" class="nav-link active">Shelters</a></li>
+                    <li><a href="care-guide.html" class="nav-link">Care Guide</a></li>
+                    <li><a href="stories.html" class="nav-link">Stories</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container shelter-workspace">
+        <div class="workspace-header">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;">Verified Safe Haven Networks</h1>
+            <p style="color: var(--text-muted);">Explore high-standard medical hubs, rehabilitation environments, and vetted animal sanctuaries aligned with our structural standards framework.</p>
+        </div>
+
+        <div class="shelter-grid">
+            <div class="shelter-card">
+                <div class="shelter-img-wrapper">
+                    <img src="https://th.bing.com/th/id/OIP.EsBVXqRYuDLvpvmCIhEAXQHaEK?w=272&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Hope Shelter Facility" class="shelter-img">
+                </div>
+                <div class="shelter-info">
+                    <div>
+                        <h2 class="shelter-name">Hope Shelter</h2>
+                        <div class="shelter-meta-row">📍 104 Fifth Avenue, New York, NY</div>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">A state-of-the-art facility featuring custom temperature-regulated indoor yards, advanced surgical care wings, and behavioral alignment specialists.</p>
+                    </div>
+                    <div>
+                        <div class="metrics-pill-box">
+                            <span class="metric-pill">🐾 54 Active Companions</span>
+                            <span class="metric-pill" style="color:var(--success); border-color:var(--success);">✓ 100% Medical Clear Rate</span>
+                        </div>
+                        <div class="shelter-footer">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--primary);">Open: 09 AM - 05 PM</span>
+                            <a href="visit.html?shelter=Hope%20Shelter,%20NY" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.8rem;">Schedule Visit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shelter-card">
+                <div class="shelter-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=400" alt="Grace Sanctuary Facility" class="shelter-img">
+                </div>
+                <div class="shelter-info">
+                    <div>
+                        <h2 class="shelter-name">Grace Sanctuary</h2>
+                        <div class="shelter-meta-row">📍 Green Valley Estate, NY</div>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">Dedicated predominantly to complex domestic feline support structures, nurturing socialization arenas, and high-frequency matching operations.</p>
+                    </div>
+                    <div>
+                        <div class="metrics-pill-box">
+                            <span class="metric-pill">🐾 36 Active Companions</span>
+                            <span class="metric-pill" style="color:var(--success); border-color:var(--success);">✓ 100% Medical Clear Rate</span>
+                        </div>
+                        <div class="shelter-footer">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--primary);">Open: 10 AM - 04 PM</span>
+                            <a href="visit.html?shelter=Grace%20Sanctuary" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.8rem;">Schedule Visit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Matrix Synchronization Initialization Engine Block
+            const themeToggle = document.getElementById('theme-toggle');
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            themeToggle.addEventListener('click', () => {
+                const target = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', target);
+                localStorage.setItem('theme', target);
+            });
+        });
+    </script>
+</body>
+</html>

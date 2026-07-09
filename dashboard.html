@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Operations Control Dashboard | Pawsitive Hearts</title>
+    <style>
+        /* --- CSS VARIABLES & THEMING --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #06b6d4;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        /* --- BASE RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--background); color: var(--text); transition: var(--transition); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        [data-theme="dark"] .header { background-color: rgba(15, 23, 42, 0.8); }
+        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { display: flex; gap: 32px; list-style: none; }
+        .nav-link { font-weight: 500; color: var(--text-muted); }
+        .nav-link:hover { color: var(--text); }
+        .theme-toggle { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text); padding: 8px; }
+
+        /* --- DASHBOARD WORKSPACE --- */
+        .dashboard-workspace { padding-top: 130px; padding-bottom: 80px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+        
+        /* --- PANEL STRUCTURES --- */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        .panel-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow); position: relative; }
+        .panel-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        /* --- DYNAMIC LOG DATA NODES --- */
+        .data-stream-stack { display: flex; flex-direction: column; gap: 16px; }
+        .empty-signal { text-align: center; color: var(--text-muted); padding: 40px 20px; font-style: italic; border: 2px dashed var(--border); border-radius: var(--radius-md); }
+        
+        .log-node {
+            background-color: var(--background); border: 1px solid var(--border);
+            padding: 18px; border-radius: var(--radius-md); display: flex;
+            justify-content: space-between; align-items: center; transition: var(--transition);
+        }
+        .log-node:hover { transform: scale(1.01); }
+        .node-main h4 { font-weight: 700; font-size: 1.1rem; }
+        .node-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+        
+        /* --- STATUS BADGES --- */
+        .status-badge { display: inline-flex; padding: 4px 12px; font-size: 0.8rem; font-weight: 700; border-radius: 100px; text-transform: uppercase; }
+        .status-badge.pending { background-color: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-badge.confirmed { background-color: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+        .clear-cache-btn { background: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.85rem; cursor: pointer; transition: var(--transition); font-weight: 600; }
+        .clear-cache-btn:hover { color: var(--text); border-color: var(--text); }
+
+        @media (max-width: 968px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR HEADER -->
+    <header class="header">
+        <div class="container navbar">
+            <a href="index.html" class="logo">🐾 Pawsitive Hearts</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="browse.html" class="nav-link">Browse Pets</a></li>
+                    <li><a href="shelters.html" class="nav-link">Shelters</a></li>
+                    <li><a href="care-guide.html" class="nav-link">Care Guide</a></li>
+                    <li><a href="stories.html" class="nav-link">Stories</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENT FIELDS CONTAINER -->
+    <main class="container dashboard-workspace">
+        <div class="dashboard-header">
+            <div>
+                <h1 style="font-size: 2.5rem; font-weight: 800;">Operations Dashboard</h1>
+                <p style="color: var(--text-muted);">Manage real-time tracking pipelines, pipeline sync parameters, and processing requests.</p>
+            </div>
+            <button class="clear-cache-btn" id="purge-cache-trigger">Clear Local Activity Sandbox</button>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <!-- Column 1: Application Pipelines -->
+            <section class="panel-card">
+                <h2 class="panel-title">📝 Active Adoption Folders</h2>
+                <div class="data-stream-stack" id="applications-mounting-node">
+                    <!-- Dynamic Stream Execution Injection Point -->
+                </div>
+            </section>
+
+            <!-- Column 2: Scheduled Facility Visitations -->
+            <section class="panel-card">
+                <h2 class="panel-title">🗓️ Scheduled Facility Bookings</h2>
+                <div class="data-stream-stack" id="visits-mounting-node">
+                    <!-- Dynamic Stream Execution Injection Point -->
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Tracking System Synchronizer
+            const themeToggle = document.getElementById('theme-toggle');
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            themeToggle.addEventListener('click', () => {
+                const target = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', target);
+                localStorage.setItem('theme', target);
+            });
+
+            // Dynamic Runtime Extraction Elements
+            const appContainer = document.getElementById('applications-mounting-node');
+            const visitContainer = document.getElementById('visits-mounting-node');
+
+            function compileOperationsMatrix() {
+                const applicationRecords = JSON.parse(localStorage.getItem('adoption_applications') || '[]');
+                const visitationRecords = JSON.parse(localStorage.getItem('visit_appointments') || '[]');
+
+                // Build Applications Stream Markup
+                if (applicationRecords.length === 0) {
+                    appContainer.innerHTML = `<div class="empty-signal">No active companion adoption file paths registered currently.</div>`;
+                } else {
+                    appContainer.innerHTML = applicationRecords.map(app => `
+                        <div class="log-node">
+                            <div class="node-main">
+                                <h4>Target: ${escapeHtml(app.pet)}</h4>
+                                <div class="node-sub">Applicant node: ${escapeHtml(app.applicant)} (${escapeHtml(app.email)})</div>
+                                <div class="node-sub">Logged Timestamp: ${escapeHtml(app.timestamp)}</div>
+                            </div>
+                            <span class="status-badge pending">${escapeHtml(app.status)}</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Build Visitations Stream Markup
+                if (visitationRecords.length === 0) {
+                    visitContainer.innerHTML = `<div class="empty-signal">No future schedule reservations verified in this sandbox environment.</div>`;
+                } else {
+                    visitContainer.innerHTML = visitationRecords.map(visit => `
+                        <div class="log-node">
+                            <div class="node-main">
+                                <h4>${escapeHtml(visit.shelter)}</h4>
+                                <div class="node-sub">Allocated Allocation: ${escapeHtml(visit.date)} @ ${escapeHtml(visit.time)}</div>
+                                <div class="node-sub">Registered: ${escapeHtml(visit.timestamp)}</div>
+                            </div>
+                            <span class="status-badge confirmed">${escapeHtml(visit.status)}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Simple HTML Entity Scrubber Protection Filter
+            function escapeHtml(str) {
+                return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            }
+
+            // Bind Cache Purging Capabilities
+            document.getElementById('purge-cache-trigger').addEventListener('click', () => {
+                localStorage.removeItem('adoption_applications');
+                localStorage.removeItem('visit_appointments');
+                compileOperationsMatrix();
+            });
+
+            // Run Compile Execution Sequence
+            compileOperationsMatrix();
+        });
+    </script>
+</body>
+</html>

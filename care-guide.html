@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Care Guides | Pawsitive Hearts</title>
+    <style>
+        /* --- CSS VARIABLES & THEMING --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #06b6d4;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        /* --- BASE RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--background); color: var(--text); transition: var(--transition); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        [data-theme="dark"] .header { background-color: rgba(15, 23, 42, 0.8); }
+        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { display: flex; gap: 32px; list-style: none; }
+        .nav-link { font-weight: 500; color: var(--text-muted); }
+        .nav-link:hover, .nav-link.active { color: var(--text); }
+        .theme-toggle { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text); padding: 8px; }
+
+        /* --- WORKSPACE LAYOUT --- */
+        .guide-workspace { padding-top: 120px; padding-bottom: 80px; }
+        .workspace-header { text-align: center; max-width: 600px; margin: 0 auto 48px auto; }
+
+        /* --- NAVIGATION INTERACTIVE TABS --- */
+        .tabs-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; }
+        .tab-btn {
+            background-color: var(--surface); border: 1px solid var(--border);
+            padding: 10px 24px; border-radius: 100px; font-weight: 600;
+            color: var(--text-muted); cursor: pointer; transition: var(--transition);
+        }
+        .tab-btn:hover, .tab-btn.active { border-color: var(--primary); color: var(--text); box-shadow: var(--shadow); }
+        .tab-btn.active { background-color: var(--primary); color: white; }
+
+        /* --- GUIDES INTERFACE GRID --- */
+        .guides-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; }
+        .articles-stack { display: flex; flex-direction: column; gap: 24px; }
+        
+        .guide-card {
+            background-color: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 32px; box-shadow: var(--shadow);
+            transition: var(--transition); display: none;
+        }
+        .guide-card.visible { display: block; }
+
+        .guide-meta { font-size: 0.85rem; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .guide-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
+        .guide-content p { color: var(--text-muted); margin-bottom: 16px; }
+
+        /* --- VITAL CHECKLIST SIDEBAR --- */
+        .checklist-sidebar {
+            background-color: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 28px; height: fit-content;
+            position: sticky; top: 100px;
+        }
+        .sidebar-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+        .check-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; font-size: 0.95rem; }
+        .check-box { color: var(--success); font-weight: bold; }
+
+        @media (max-width: 968px) {
+            .guides-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container navbar">
+            <a href="index.html" class="logo">🐾 Pawsitive Hearts</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="browse.html" class="nav-link">Browse Pets</a></li>
+                    <li><a href="shelters.html" class="nav-link">Shelters</a></li>
+                    <li><a href="care-guide.html" class="nav-link active">Care Guide</a></li>
+                    <li><a href="stories.html" class="nav-link">Stories</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container guide-workspace">
+        <div class="workspace-header">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px;">Companion Integration Guides</h1>
+            <p style="color: var(--text-muted);">Vetted architectural blueprints for home transition strategies, structural wellness parameters, and behavioral diagnostics.</p>
+        </div>
+
+        <div class="tabs-row">
+            <button class="tab-btn active" data-filter="all">All Profiles</button>
+            <button class="tab-btn" data-filter="canine">Canine Care</button>
+            <button class="tab-btn" data-filter="feline">Feline Care</button>
+            <button class="tab-btn" data-filter="diet">Nutritional Core</button>
+        </div>
+
+        <div class="guides-grid">
+            <div class="articles-stack">
+                
+                <div class="guide-card visible" data-category="canine">
+                    <div class="guide-meta">Canine Care Architecture</div>
+                    <h2 class="guide-title">The First 72 Hours: Securing Safe Decompression</h2>
+                    <div class="guide-content">
+                        <p>When introducing a rescued dog into your private layout environment, structural sensory adaptation protocols must be observed. Limit visitors entirely during initial operational milestones. Keep ambient volumes restricted, establish precise territorial borders, and allow the matching profile to map out new scents calmly without overstimulation.</p>
+                    </div>
+                </div>
+
+                <div class="guide-card visible" data-category="feline">
+                    <div class="guide-meta">Feline Care Metrics</div>
+                    <h2 class="guide-title">Micro-Space Transitions for Felines</h2>
+                    <div class="guide-content">
+                        <p>Cats rely heavily on absolute territorial secure anchors. Do not release a newly matched cat directly across an open open-plan household. Instead, deploy a localized integration room containing water, premium high-sided litter trays, and interactive vertical scaling structures to build initial micro-confidence loops before expanding spatial access metrics.</p>
+                    </div>
+                </div>
+
+                <div class="guide-card visible" data-category="diet">
+                    <div class="guide-meta">Nutritional Core Setup</div>
+                    <h2 class="guide-title">Standardizing Metabolic Balance Arrays</h2>
+                    <div class="guide-content">
+                        <p>Abrupt nutritional runtime adjustments can destabilize standard metabolic health levels. Always match historical facility feeding parameters precisely across initial 14-day tracking frameworks. Introduce clean high-protein alternative choices selectively over time, mixing macro percentages gently to mitigate digestive tracking inconsistencies.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <aside class="checklist-sidebar">
+                <h3 class="sidebar-title">Essential Equipment Check</h3>
+                <div class="check-item"><span class="check-box">✓</span> <span>A verified microchip profile tracking tag configuration</span></div>
+                <div class="check-item"><span class="check-box">✓</span> <span>Certified dual-locking escape proof body safety harness</span></div>
+                <div class="check-item"><span class="check-box">✓</span> <span>Veterinary approved weight-adjusted dietary baseline packages</span></div>
+                <div class="check-item"><span class="check-box">✓</span> <span>Isolated interior quiet micro-zone structural setup</span></div>
+            </aside>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Matrix Configuration
+            const themeToggle = document.getElementById('theme-toggle');
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            themeToggle.addEventListener('click', () => {
+                const target = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', target);
+                localStorage.setItem('theme', target);
+            });
+
+            // Interactive Tab Filtering Logic Engine Matrix
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const cards = document.querySelectorAll('.guide-card');
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const targetFilter = btn.getAttribute('data-filter');
+
+                    cards.forEach(card => {
+                        if (targetFilter === 'all' || card.getAttribute('data-category') === targetFilter) {
+                            card.classList.add('visible');
+                        } else {
+                            card.classList.remove('visible');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule a Visit | Pawsitive Hearts</title>
+    <style>
+        /* --- CSS VARIABLES & THEMING --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #06b6d4;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --success: #10b981;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        /* --- BASE RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--background); color: var(--text); transition: var(--transition); line-height: 1.6; }
+        .container { width: 100%; max-width: 800px; margin: 0 auto; padding: 0 24px; }
+
+        /* --- HEADER --- */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        [data-theme="dark"] .header { background-color: rgba(15, 23, 42, 0.8); }
+        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .theme-toggle { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text); padding: 8px; }
+
+        /* --- BOOKING WORKSPACE LAYOUT --- */
+        .form-workspace { padding-top: 130px; padding-bottom: 80px; }
+        .form-header { text-align: center; margin-bottom: 40px; }
+        .form-title { font-size: 2.25rem; font-weight: 800; margin-bottom: 8px; }
+        
+        .form-card { background-color: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; }
+
+        /* --- CONFIGURATION FIELD STYLES --- */
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; }
+        .form-input, .form-select {
+            width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+            background-color: var(--background); color: var(--text); font-size: 1rem; transition: var(--transition); outline: none;
+        }
+        .form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+        
+        .error-message { color: var(--error); font-size: 0.85rem; margin-top: 6px; display: none; }
+        .form-group.invalid .form-input, .form-group.invalid .form-select { border-color: var(--error); }
+        .form-group.invalid .error-message { display: block; }
+
+        /* --- TIME GRID SELECTOR --- */
+        .time-slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-top: 8px; }
+        .time-slot-btn {
+            background-color: var(--background); border: 1px solid var(--border); padding: 12px;
+            border-radius: var(--radius-sm); color: var(--text); text-align: center; font-weight: 600;
+            cursor: pointer; transition: var(--transition);
+        }
+        .time-slot-btn:hover { border-color: var(--primary); background-color: rgba(79, 70, 229, 0.05); }
+        .time-slot-btn.selected { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+        /* --- BUTTON LAYOUTS --- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 14px 32px; font-weight: 600; border-radius: var(--radius-md);
+            transition: var(--transition); cursor: pointer; border: none; font-size: 1rem; width: 100%;
+        }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        /* --- LOADER --- */
+        .processing-loader {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9); display: none;
+            flex-direction: column; align-items: center; justify-content: center; z-index: 10;
+        }
+        [data-theme="dark"] .processing-loader { background-color: rgba(30, 41, 59, 0.95); }
+        .spinner { width: 48px; height: 48px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- TOAST --- */
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; }
+        .toast { background-color: var(--surface); color: var(--text); padding: 16px 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); border-left: 4px solid var(--success); transform: translateX(120%); transition: transform 0.4s ease; }
+        .toast.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="header">
+        <div class="container navbar">
+            <a href="index.html" class="logo">🐾 Pawsitive Hearts</a>
+            <button class="theme-toggle" id="theme-toggle">🌓</button>
+        </div>
+    </header>
+
+    <main class="container form-workspace">
+        <div class="form-header">
+            <h1 class="form-title">Schedule a Shelter Visit</h1>
+            <p style="color: var(--text-muted);">Coordinate secure appointment frameworks directly with facility managers.</p>
+        </div>
+
+        <div class="form-card">
+            <div class="processing-loader" id="form-loader">
+                <div class="spinner"></div>
+                <h3 style="font-weight: 700;">Securing Calendar Matrix Allocation...</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Verifying facility workload capacity balances.</p>
+            </div>
+
+            <form id="visit-form" novalidate>
+                <div class="form-group">
+                    <label class="form-label" for="target-shelter">Target Facility</label>
+                    <select id="target-shelter" class="form-select" required>
+                        <option value="">Select facility workspace...</option>
+                        <option value="Hope Shelter, NY">Hope Shelter, NY</option>
+                        <option value="Grace Sanctuary">Grace Sanctuary</option>
+                        <option value="West End Aviary">West End Aviary</option>
+                    </select>
+                    <div class="error-message">Please select a validated platform facility location.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="visit-date">Appointment Date</label>
+                    <input type="date" id="visit-date" class="form-input" required>
+                    <div class="error-message">Please select a valid future parameter date.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Available Time Windows</label>
+                    <div class="time-slots-grid" id="slots-mounting-point">
+                        <div class="time-slot-btn" data-time="09:00 AM">09:00 AM</div>
+                        <div class="time-slot-btn" data-time="11:00 AM">11:00 AM</div>
+                        <div class="time-slot-btn" data-time="01:30 PM">01:30 PM</div>
+                        <div class="time-slot-btn" data-time="04:00 PM">04:00 PM</div>
+                    </div>
+                    <input type="hidden" id="selected-time-slot" required>
+                    <div class="error-message" id="time-error-msg" style="margin-top: 12px;">Please select an explicit slot allocation node.</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Lock Appointment Booking</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Sync Loop
+            const themeToggle = document.getElementById('theme-toggle');
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+            themeToggle.addEventListener('click', () => {
+                const target = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', target);
+                localStorage.setItem('theme', target);
+            });
+
+            // Parse Incoming Link Routing Parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialShelter = urlParams.get('shelter');
+            if (initialShelter) {
+                const selectElement = document.getElementById('target-shelter');
+                if (selectElement.querySelector(`option[value="${initialShelter}"]`)) {
+                    selectElement.value = initialShelter;
+                }
+            }
+
+            // Set current minimal date structure values (Prevent scheduling historically behind current framework parameters)
+            const dateInput = document.getElementById('visit-date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+
+            // Time Selector Logic Grid Mapping
+            const slotButtons = document.querySelectorAll('.time-slot-btn');
+            const hiddenTimeInput = document.getElementById('selected-time-slot');
+            const timeGroup = hiddenTimeInput.parentElement;
+
+            slotButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    slotButtons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    hiddenTimeInput.value = btn.getAttribute('data-time');
+                    timeGroup.classList.remove('invalid');
+                });
+            });
+
+            // Form Submit Controller Handler Execution Matrix
+            const form = document.getElementById('visit-form');
+            const loader = document.getElementById('form-loader');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                let formIsValid = true;
+
+                form.querySelectorAll('[required]').forEach(input => {
+                    const group = input.parentElement;
+                    if (!input.value.trim()) {
+                        group.classList.add('invalid');
+                        formIsValid = false;
+                    } else {
+                        group.classList.remove('invalid');
+                    }
+                });
+
+                if (!formIsValid) return;
+
+                loader.style.display = 'flex';
+
+                setTimeout(() => {
+                    // Structure data compilation parameters to global runtime variable arrays
+                    const appointmentRecord = {
+                        shelter: document.getElementById('target-shelter').value,
+                        date: document.getElementById('visit-date').value,
+                        time: hiddenTimeInput.value,
+                        timestamp: new Date().toLocaleDateString(),
+                        status: "Confirmed Allocation"
+                    };
+
+                    const activeCache = JSON.parse(localStorage.getItem('visit_appointments') || '[]');
+                    activeCache.push(appointmentRecord);
+                    localStorage.setItem('visit_appointments', JSON.stringify(activeCache));
+
+                    loader.style.display = 'none';
+                    showToast();
+
+                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+                }, 2000);
+            });
+
+            function showToast() {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `<span>✓</span> <span>Appointment structural nodes verified and committed to records successfully!</span>`;
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 50);
+            }
+        });
+    </script>
+</body>
+</html>
